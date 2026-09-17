@@ -27,35 +27,36 @@ class ProfileScreen extends StatelessWidget {
                         children: [
                         ProfileHeader(),
 
-                        const SizedBox(height: 32),
-
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                            Expanded(
-                                child: StatItem(
-                                label: '본 영화',
-                                value: '24',
-                                ),
+                        Container(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 32,
                             ),
-                            SizedBox(width: 12),
-                            Expanded(
-                                child: StatItem(
-                                label: '평균 평점',
-                                value: '4.3',
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: const [
+                                Expanded(
+                                    child: StatItem(
+                                    label: '본 영화',
+                                    value: '24',
+                                    ),
                                 ),
-                            ),
-                            SizedBox(width: 12),
-                            Expanded(
-                                child: StatItem(
-                                label: '즐겨찾기',
-                                value: '8',
+                                SizedBox(width: 12),
+                                Expanded(
+                                    child: StatItem(
+                                    label: '평균 평점',
+                                    value: '4.3',
+                                    ),
                                 ),
+                                SizedBox(width: 12),
+                                Expanded(
+                                    child: StatItem(
+                                    label: '즐겨찾기',
+                                    value: '8',
+                                    ),
+                                ),
+                                ],
                             ),
-                            ],
-                        ),
-
-                        const SizedBox(height: 32),
+                            ),
 
                         const Align(
                             alignment: Alignment.centerLeft,
