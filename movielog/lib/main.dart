@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:movielog/ProfileScreens/ProfileBody/profile_screen.dart';
 import 'package:movielog/theme/app_colors.dart';
 
 import 'theme/app_theme.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:movielog/SignUpScreen/sign_up_screen.dart';
 
 void main() => runApp(const MovieLogApp());
 
@@ -13,7 +15,9 @@ class MovieLogApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: AppTheme.light,
-    home: const StartScreen(),
+    // home: const StartScreen(),
+    // home: const ProfileScreen(),
+    home: const SignUpScreen(),
   );
 }
 
@@ -67,6 +71,12 @@ class StartScreen extends StatelessWidget {
                     minimumSize: const Size(0, 48),
                     backgroundColor: AppColors.primary,
                     foregroundColor: colors.onPrimary,
+                    shape: RoundedRectangleBorder(
+                      // ← 이거 추가
+                      borderRadius: BorderRadius.circular(
+                        12,
+                      ), // 숫자 작을수록 각짐, 0이면 완전 직각
+                    ),
                   ),
                   child: const Text('시작하기'),
                 ),
