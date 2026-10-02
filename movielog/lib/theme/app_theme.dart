@@ -7,9 +7,17 @@ abstract final class AppTheme {
   static final ThemeData light = ThemeData(
     useMaterial3: true,
     fontFamily: 'Manrope', // 앱의 기본 Font Family
-    scaffoldBackgroundColor: AppColors.warmWhite, // Scaffold의 기본 배경색
+
+    colorScheme: const ColorScheme.light(
+      primary: AppColors.primary, // #6750A4[cite: 1, 2]
+      surface:
+          AppColors.surface, // 또는 AppColors.warmWhite (#FAF9F5)[cite: 1, 2]
+    ),
+
+    scaffoldBackgroundColor: AppColors.warmWhite,
+    // Scaffold의 기본 배경색
     appBarTheme: const AppBarTheme(
-      // 모든 AppBar에 공통으로 적용할 스타일
+      // 모든 AppBar에 공통으로 적용할 스타일 ~~~(AppBarTheme)~~~
       backgroundColor: AppColors.warmWhite,
       foregroundColor: AppColors.black,
       centerTitle: true,

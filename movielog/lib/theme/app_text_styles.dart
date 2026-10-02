@@ -9,6 +9,12 @@ abstract final class AppTextStyles {
     color: AppColors.black,
   );
 
+  static const titleAppBar = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w500,
+    color: AppColors.primary,
+  );
+
   static const titleMedium = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w600,
@@ -16,7 +22,7 @@ abstract final class AppTextStyles {
   );
 
   static const bodyMedium = TextStyle(
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: FontWeight.w400,
     color: AppColors.black,
     height: 1.5,
