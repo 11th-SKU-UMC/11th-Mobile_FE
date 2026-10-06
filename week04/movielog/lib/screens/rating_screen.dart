@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/common_app_bar.dart';
@@ -82,20 +83,15 @@ class _RatingScreenState extends State<RatingScreen> {
                   itemCount: 5,
                   itemSize: 40,
                   itemPadding: const EdgeInsets.symmetric(horizontal: 2),
-                  itemBuilder: (context, _) => const Icon(
-                    Icons.star,
-                    color: AppColors.violet,
-                  ),
+                  itemBuilder: (context, _) =>
+                      const Icon(Icons.star, color: AppColors.violet),
                   onRatingUpdate: (value) {
                     setState(() => _rating = value);
                   },
                 ),
               ),
               const SizedBox(height: 32),
-              _SaveButton(
-                enabled: _canSubmit,
-                onPressed: _handleSubmit,
-              ),
+              _SaveButton(enabled: _canSubmit, onPressed: _handleSubmit),
             ],
           ),
         ),
@@ -120,7 +116,7 @@ class _MoviePoster extends StatelessWidget {
           assetPath,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) => Container(
-            color: AppColors.gray.withOpacity(0.2),
+            color: AppColors.gray.withValues(alpha: 0.2),
             alignment: Alignment.center,
             child: const Icon(
               Icons.image_not_supported_outlined,
@@ -136,10 +132,7 @@ class _MoviePoster extends StatelessWidget {
 
 /// 평점 저장 버튼 (별점 선택 전에는 비활성화)
 class _SaveButton extends StatelessWidget {
-  const _SaveButton({
-    required this.enabled,
-    required this.onPressed,
-  });
+  const _SaveButton({required this.enabled, required this.onPressed});
 
   final bool enabled;
   final VoidCallback onPressed;
@@ -152,9 +145,9 @@ class _SaveButton extends StatelessWidget {
         onPressed: enabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.violet,
-          disabledBackgroundColor: AppColors.violet.withOpacity(0.4),
+          disabledBackgroundColor: AppColors.violet.withValues(alpha: 0.4),
           foregroundColor: AppColors.white,
-          disabledForegroundColor: AppColors.white.withOpacity(0.8),
+          disabledForegroundColor: AppColors.white.withValues(alpha: 0.8),
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

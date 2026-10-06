@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 
@@ -11,15 +12,17 @@ InputDecoration buildSignUpFieldDecoration({
   required String hintText,
   required bool hasError,
 }) {
-  final normalBorderSide = BorderSide(color: AppColors.gray.withOpacity(0.3));
+  final normalBorderSide = BorderSide(
+    color: AppColors.gray.withValues(alpha: 0.3),
+  );
   const focusedBorderSide = BorderSide(color: AppColors.violet, width: 2);
   const errorBorderSide = BorderSide(color: kSignUpErrorColor);
   const focusedErrorBorderSide = BorderSide(color: kSignUpErrorColor, width: 2);
 
   OutlineInputBorder border(BorderSide side) => OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: side,
-      );
+    borderRadius: BorderRadius.circular(12),
+    borderSide: side,
+  );
 
   return InputDecoration(
     hintText: hintText,
@@ -31,8 +34,9 @@ InputDecoration buildSignUpFieldDecoration({
         : null,
     border: border(hasError ? errorBorderSide : normalBorderSide),
     enabledBorder: border(hasError ? errorBorderSide : normalBorderSide),
-    focusedBorder:
-        border(hasError ? focusedErrorBorderSide : focusedBorderSide),
+    focusedBorder: border(
+      hasError ? focusedErrorBorderSide : focusedBorderSide,
+    ),
     errorBorder: border(errorBorderSide),
     focusedErrorBorder: border(focusedErrorBorderSide),
     errorStyle: AppTextStyles.bodySmall.copyWith(color: kSignUpErrorColor),

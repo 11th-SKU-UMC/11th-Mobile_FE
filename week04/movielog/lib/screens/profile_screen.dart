@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/common_app_bar.dart';
@@ -43,11 +44,17 @@ class ProfileScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: const [
-                  Expanded(child: StatItem(label: '본 영화', value: '342')),
+                  Expanded(
+                    child: StatItem(label: '본 영화', value: '342'),
+                  ),
                   SizedBox(width: 8),
-                  Expanded(child: StatItem(label: '평점', value: '4.2')),
+                  Expanded(
+                    child: StatItem(label: '평점', value: '4.2'),
+                  ),
                   SizedBox(width: 8),
-                  Expanded(child: StatItem(label: '즐겨찾기', value: '58')),
+                  Expanded(
+                    child: StatItem(label: '즐겨찾기', value: '58'),
+                  ),
                 ],
               ),
               const SizedBox(height: 32),
@@ -65,7 +72,7 @@ class ProfileScreen extends StatelessWidget {
                   children: [
                     Chip(
                       label: const Text('드라마'),
-                      backgroundColor: AppColors.violet.withOpacity(0.1),
+                      backgroundColor: AppColors.violet.withValues(alpha: 0.1),
                       side: BorderSide.none,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -73,7 +80,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     Chip(
                       label: const Text('SF'),
-                      backgroundColor: AppColors.violet.withOpacity(0.1),
+                      backgroundColor: AppColors.violet.withValues(alpha: 0.1),
                       side: BorderSide.none,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -81,7 +88,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     Chip(
                       label: const Text('애니메이션'),
-                      backgroundColor: AppColors.violet.withOpacity(0.1),
+                      backgroundColor: AppColors.violet.withValues(alpha: 0.1),
                       side: BorderSide.none,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
