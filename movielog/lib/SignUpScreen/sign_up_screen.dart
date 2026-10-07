@@ -191,7 +191,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 5),
                 TextFormField(
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-
+                  obscureText: true,
                   controller: passwordController,
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(
