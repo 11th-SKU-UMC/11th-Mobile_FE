@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
+import 'package:go_router/go_router.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -275,6 +276,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               formKey.currentState?.validate() ?? false;
                           if (!isValid) return;
                           FocusScope.of(context).unfocus();
+                          context.go('/home');
                         }
                       : null,
                   style: ElevatedButton.styleFrom(
