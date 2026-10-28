@@ -1,0 +1,70 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+
+import '../router/app_router.dart';
+import '../theme/app_spacing.dart';
+
+/// 0주차 시작하기 화면.
+class StartScreen extends StatelessWidget {
+  const StartScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  const SizedBox(height: AppSpacing.xl),
+                  const Text('FLUTTER 1주차'),
+                  const SizedBox(height: 64),
+                  SvgPicture.asset(
+                    'assets/logos/movielog_logo.svg',
+                    width: 72,
+                    height: 72,
+                    semanticsLabel: 'MovieLog 로고',
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+                  Text(
+                    '영화의 순간을\n기록하세요',
+                    textAlign: TextAlign.center,
+                    style: textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  const Text(
+                    '보고 싶은 영화부터 나만의 평점까지\n한곳에서 관리해요',
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  // go: 시작 화면을 Stack에 남기지 않는다.
+                  // 회원가입 화면에서 뒤로 가기로 시작 화면에 돌아오지 않도록 하기 위함.
+                  onPressed: () => context.go(AppRoutes.register),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(0, 48),
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.onPrimary,
+                  ),
+                  child: const Text('시작하기'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
