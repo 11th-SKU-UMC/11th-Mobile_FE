@@ -96,10 +96,13 @@ class _SignupScreenState extends State<SignupScreen> {
                     TextFormField(
                       controller: _nicknameController,
                       textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: '닉네임',
                         hintText: '닉네임을 입력해 주세요.',
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
+                        errorText: vm.nicknameState == CheckState.unavailable
+                            ? '이미 사용 중인 닉네임입니다.'
+                            : null,
                       ),
                       onChanged: (value) {
                         vm.onNicknameChanged(value);
@@ -158,10 +161,13 @@ class _SignupScreenState extends State<SignupScreen> {
                           TextInputType.emailAddress,
                       textInputAction:
                           TextInputAction.next,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: '이메일',
                         hintText: '이메일을 입력해 주세요.',
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
+                        errorText: vm.emailState == CheckState.unavailable
+                            ? '이미 사용 중인 이메일입니다.'
+                            : null,
                       ),
                       onChanged: (value) {
                         vm.onEmailChanged(value);
@@ -302,12 +308,7 @@ class _CheckMessage extends StatelessWidget {
         );
 
       case CheckState.unavailable:
-        return Text(
-          unavailableMessage,
-          style: const TextStyle(
-            color: Colors.red,
-          ),
-        );
+        return const SizedBox.shrink();
 
       case CheckState.error:
         return const Text(

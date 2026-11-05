@@ -45,7 +45,6 @@ class SignupViewModel extends ChangeNotifier {
         _duplicatedNickname = nickname.trim();
         nicknameState = CheckState.unavailable;
       }
-      
     } catch (_) {
       nicknameState = CheckState.error;
     }
