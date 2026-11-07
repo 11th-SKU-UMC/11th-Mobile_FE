@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:movielog/view_models/sign_up_view_model.dart';
+import 'package:movielog/widgets/movielog_button.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -28,16 +31,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   void dispose() {
+    nicknameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    nicknameFocusNode.dispose();
+    emailFocusNode.dispose();
+    passwordFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<SignUpViewModel>();
+
     final canSubmit =
         nicknameController.text.trim().length >= 2 &&
         emailController.text.contains('@') &&
         passwordController.text.length >= 8 &&
-        agreedToTerms;
+        agreedToTerms &&
+        viewModel.nicknameCheckStatus == CheckStatus.available &&
+        viewModel.emailCheckStatus == CheckStatus.available;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.warmWhite,
@@ -79,53 +92,112 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 const SizedBox(height: 5),
-                TextFormField(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  controller: nicknameController,
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16, // 좌우 여백
-                      vertical: 10,
+                // 6주차: 입력창 + 중복 확인 버튼을 Row의 형제로 배치 (간격 8px)
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        controller: nicknameController,
+                        focusNode: nicknameFocusNode,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, // 좌우 여백
+                            vertical: 10,
+                          ),
+
+                          labelText: '닉네임 입력해주세요.',
+                          hintText: '두 글자 이상 입력',
+                          // 6주차: 서버 중복 확인 결과를 Form 에러 상태로 연결
+                          errorText: viewModel.nicknameErrorText,
+                          suffixIcon:
+                              viewModel.nicknameCheckStatus ==
+                                  CheckStatus.available
+                              ? const Icon(
+                                  Icons.check_circle,
+                                  color: AppColors.primary,
+                                )
+                              : null,
+
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(color: Colors.grey),
+                          ), // 박스 테두리
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: Colors.blue,
+                              width: 2,
+                            ),
+                          ), // 포커스 박스 테두리
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.red),
+                          ), // 값 오류 박스 테두리
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.red, width: 2),
+                          ), // 값 오류 박스 테두리
+                        ),
+
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          final nickname = value?.trim() ?? '';
+
+                          if (nickname.isEmpty) {
+                            return '닉네임을 입력해주세요.';
+                          }
+
+                          if (nickname.length < 2) {
+                            return '닉네임은 2자 이상이어야 합니다.';
+                          }
+
+                          return null;
+                        },
+                        // 6주차: 입력이 바뀌면 이전 확인 결과 무효화
+                        onChanged: (value) {
+                          viewModel.onNicknameChanged(value);
+                          setState(() {});
+                        },
+                        onFieldSubmitted: (_) => emailFocusNode.requestFocus(),
+                      ),
                     ),
-
-                    labelText: '닉네임 입력해주세요.',
-                    hintText: '두 글자 이상 입력',
-
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.grey),
-                    ), // 박스 테두리
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.blue, width: 2),
-                    ), // 포커스 박스 테두리
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.red),
-                    ), // 값 오류 박스 테두리
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.red, width: 2),
-                    ), // 값 오류 박스 테두리
-                  ),
-
-                  textInputAction: TextInputAction.next,
-                  validator: (value) {
-                    final nickname = value?.trim() ?? '';
-
-                    if (nickname.isEmpty) {
-                      return '닉네임을 입력해주세요.';
-                    }
-
-                    if (nickname.length < 2) {
-                      return '닉네임은 2자 이상이어야 합니다.';
-                    }
-
-                    return null;
-                  },
-                  onChanged: (_) => setState(() {}),
-                  onFieldSubmitted: (_) => emailFocusNode.requestFocus(),
+                    const SizedBox(width: 8),
+                    // 입력창 옆 보조 버튼: width null(내용 기반 크기)
+                    MovieLogButton(
+                      label: '중복 확인',
+                      isLoading:
+                          viewModel.nicknameCheckStatus == CheckStatus.checking,
+                      onPressed: viewModel.canCheckNickname
+                          ? () =>
+                                viewModel.checkNickname(nicknameController.text)
+                          : null,
+                    ),
+                  ],
                 ),
+                if (viewModel.nicknameCheckStatus == CheckStatus.checking)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      '닉네임 사용 가능 여부를 확인 중입니다.',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                if (viewModel.nicknameCheckStatus == CheckStatus.available)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      '사용할 수 있는 닉네임입니다.',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: Colors.green,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 16),
                 Text(
                   '이메일',
@@ -136,49 +208,106 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 const SizedBox(height: 5),
-                TextFormField(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  controller: emailController,
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16, // 좌우 여백
-                      vertical: 10,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        controller: emailController,
+                        focusNode: emailFocusNode,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, // 좌우 여백
+                            vertical: 10,
+                          ),
+                          labelText: '이메일 주소를 입력해주세요.',
+                          hintText: 'movie@umc.com',
+                          errorText: viewModel.emailErrorText,
+                          suffixIcon:
+                              viewModel.emailCheckStatus ==
+                                  CheckStatus.available
+                              ? const Icon(
+                                  Icons.check_circle,
+                                  color: AppColors.primary,
+                                )
+                              : null,
+
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(color: Colors.grey),
+                          ), // 박스 테두리
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: Colors.blue,
+                              width: 2,
+                            ),
+                          ), // 포커스 박스 테두리
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.red),
+                          ), // 값 오류 박스 테두리
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.red, width: 2),
+                          ), // 값 오류 박스 테두리
+                        ),
+
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          final email = value?.trim() ?? '';
+                          if (email.isEmpty) return '이메일 주소를 입력해주세요.';
+                          final emailRegex = RegExp(
+                            r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+                          );
+                          if (!emailRegex.hasMatch(email)) {
+                            return '올바른 이메일 형식이 아닙니다.';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          viewModel.onEmailChanged(value);
+                          setState(() {});
+                        },
+                        onFieldSubmitted: (_) =>
+                            passwordFocusNode.requestFocus(),
+                      ),
                     ),
-                    labelText: '이메일 주소를 입력해주세요.',
-                    hintText: '두 글자 이상 입력',
-
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.grey),
-                    ), // 박스 테두리
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.blue, width: 2),
-                    ), // 포커스 박스 테두리
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.red),
-                    ), // 값 오류 박스 테두리
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.red, width: 2),
-                    ), // 값 오류 박스 테두리
-                  ),
-
-                  textInputAction: TextInputAction.next,
-                  validator: (value) {
-                    final email = value?.trim() ?? '';
-                    if (email.isEmpty) return '이메일 주소를 입력해주세요.';
-                    final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-                    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
-                        .hasMatch(email)) {
-                      return '올바른 이메일 형식이 아닙니다.';
-                    }
-                    return null;
-                  },
-                  onChanged: (_) => setState(() {}),
-                  onFieldSubmitted: (_) => emailFocusNode.requestFocus(),
+                    const SizedBox(width: 8),
+                    MovieLogButton(
+                      label: '중복 확인',
+                      isLoading:
+                          viewModel.emailCheckStatus == CheckStatus.checking,
+                      onPressed: viewModel.canCheckEmail
+                          ? () => viewModel.checkEmail(emailController.text)
+                          : null,
+                    ),
+                  ],
                 ),
+                if (viewModel.emailCheckStatus == CheckStatus.checking)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      '이메일 사용 가능 여부를 확인 중입니다.',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                if (viewModel.emailCheckStatus == CheckStatus.available)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      '사용할 수 있는 이메일입니다.',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: Colors.green,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 16),
                 Text(
                   '비밀번호',
@@ -191,15 +320,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 5),
                 TextFormField(
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  obscureText: true,
+
                   controller: passwordController,
+                  focusNode: passwordFocusNode,
+                  obscureText: true,
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16, // 좌우 여백
                       vertical: 10,
                     ),
                     labelText: '비밀번호를 입력해주세요.',
-                    hintText: '두 글자 이상 입력',
+                    hintText: '8자 이상 입력',
 
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -220,22 +351,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ), // 값 오류 박스 테두리
                   ),
 
-                  textInputAction: TextInputAction.next,
+                  textInputAction: TextInputAction.done,
                   validator: (value) {
-                    final nickname = value?.trim() ?? '';
+                    final password = value ?? '';
 
-                    if (nickname.isEmpty) {
+                    if (password.isEmpty) {
                       return '비밀번호를 입력해주세요.';
                     }
 
-                    if (nickname.length < 8) {
+                    if (password.length < 8) {
                       return '비밀번호는 8자 이상이어야 합니다.';
                     }
 
                     return null;
                   },
                   onChanged: (_) => setState(() {}),
-                  onFieldSubmitted: (_) => emailFocusNode.requestFocus(),
+                  onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
                 ),
 
                 const SizedBox(height: 200),
@@ -269,7 +400,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                 ),
                 const SizedBox(height: 5),
-                ElevatedButton(
+                // 6주차: Form 하단 버튼은 width: double.infinity(전체 너비)
+                MovieLogButton(
+                  label: '가입하기',
+                  width: double.infinity,
                   onPressed: canSubmit
                       ? () {
                           final isValid =
@@ -279,35 +413,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           context.go('/home');
                         }
                       : null,
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(0, 48),
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.white,
-                    disabledBackgroundColor: AppColors.SecondaryScale300,
-                    disabledForegroundColor: AppColors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    /* padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                      vertical: 10,
-                    ), */
-                  ),
-                  child: const Text(
-                    '가입하기',
-                    style: TextStyle(color: AppColors.white),
-                  ),
                 ),
-                /*Container(
-                  width: double.infinity,
-
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 5,
-                  ),
-                  padding: const EdgeInsets.all(30),
-                  alignment: Alignment.center,
-                ),*/
                 const SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center, // 가운데 정렬
