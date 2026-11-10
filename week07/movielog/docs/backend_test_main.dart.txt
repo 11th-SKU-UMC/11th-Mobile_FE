@@ -1,0 +1,83 @@
+import 'dart:convert';
+import 'dart:io' show Platform;
+
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
+
+// 실행 환경에 따라 백엔드 주소를 고릅니다.
+// 웹: localhost / 안드로이드 에뮬레이터: 10.0.2.2 (에뮬레이터에서 localhost는 자기 자신)
+String get backendBaseUrl {
+  if (kIsWeb) return 'http://localhost:8080';
+  if (Platform.isAndroid) return 'http://10.0.2.2:8080';
+  return 'http://localhost:8080';
+}
+
+void main() => runApp(const MaterialApp(
+  debugShowCheckedModeBanner: false,
+  home: BackendTestScreen(),
+));
+
+class BackendTestScreen extends StatefulWidget {
+  const BackendTestScreen({super.key});
+
+  @override
+  State<BackendTestScreen> createState() => _BackendTestScreenState();
+}
+
+class _BackendTestScreenState extends State<BackendTestScreen> {
+  final _dio = Dio(BaseOptions(
+    baseUrl: backendBaseUrl,
+    connectTimeout: const Duration(seconds: 5),
+    receiveTimeout: const Duration(seconds: 5),
+  ));
+
+  // 버튼 라벨 -> 결과 문자열
+  final Map<String, String> _results = {};
+
+  Future<void> _call(String label, String path) async {
+    setState(() => _results[label] = '요청 중...');
+    final shownPath = Uri.decodeComponent(path);
+    try {
+      final res = await _dio.get(path);
+      final pretty = const JsonEncoder.withIndent('  ').convert(res.data);
+      setState(() => _results[label] = 'GET $shownPath\n${res.statusCode}\n$pretty');
+    } on DioException catch (e) {
+      final code = e.response?.statusCode ?? e.type.name;
+      setState(() => _results[label] = 'GET $shownPath\n에러: $code\n${e.message}');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final apis = <String, String>{
+      '닉네임 중복 체크': '/members/nickname/${Uri.encodeComponent('수현')}',
+      '이메일 중복 체크': '/members/email/${Uri.encodeComponent('noco@umc.com')}',
+      '유저별 평점 조회': '/members/1/ratings',
+    };
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('백엔드 연결 테스트')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          for (final entry in apis.entries) ...[
+            ElevatedButton(
+              onPressed: () => _call(entry.key, entry.value),
+              child: Text(entry.key),
+            ),
+            if (_results[entry.key] != null)
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Text(_results[entry.key]!,
+                      style: const TextStyle(fontFamily: 'monospace', fontSize: 12)),
+                ),
+              ),
+            const SizedBox(height: 8),
+          ],
+        ],
+      ),
+    );
+  }
+}

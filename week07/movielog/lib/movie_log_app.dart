@@ -10,9 +10,10 @@ import 'router/app_router.dart';
 import 'package:provider/provider.dart';
 import 'package:movielog/core/network/movie_log_client.dart';
 import 'package:movielog/core/network/tmdb_client.dart';
-import 'package:movielog/data/services/member_check_service.dart';
+import 'package:movielog/data/services/sign_up_service.dart';
 import 'package:movielog/data/services/rating_api_service.dart';
 import 'package:movielog/data/services/tmdb_movie_service.dart';
+import 'package:movielog/view_models/learning_member_session.dart';
 
 class MovieLogApp extends StatelessWidget {
   const MovieLogApp({super.key});
@@ -24,12 +25,14 @@ class MovieLogApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
+        // 가입 결과의 memberId를 앱 전체에서 읽을 수 있게 보관합니다. (학습용, 인증 아님)
+        ChangeNotifierProvider<LearningMemberSession>(
+          create: (_) => LearningMemberSession(),
+        ),
         Provider<TmdbMovieService>(
           create: (_) => TmdbMovieService(createTmdbClient()),
         ),
-        Provider<MemberCheckService>(
-          create: (_) => MemberCheckService(movieLogClient),
-        ),
+        Provider<SignUpService>(create: (_) => SignUpService(movieLogClient)),
         Provider<RatingApiService>(
           create: (_) => RatingApiService(movieLogClient),
         ),

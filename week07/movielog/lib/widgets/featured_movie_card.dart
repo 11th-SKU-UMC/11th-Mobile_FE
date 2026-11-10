@@ -102,7 +102,7 @@ class FeaturedMovieCard extends StatelessWidget {
                     height: 52,
                     child: FilledButton.icon(
                       // TMDB id를 그대로 전달한다. (index 아님)
-                      onPressed: () => context.push('/movies/${movie.id}'),
+                      onPressed: () => context.push('/movies/${movie.id}', extra: movie),
                       style: FilledButton.styleFrom(
                         backgroundColor: AppColors.violet,
                         shape: const StadiumBorder(),
