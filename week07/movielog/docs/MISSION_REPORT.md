@@ -2,9 +2,9 @@
 
 검증일: 2026-11-12 (Asia/Seoul)
 
-PR: [[Week07] 감자/이상훈 미션 제출 #45](https://github.com/11th-SKU-UMC/11th-Mobile_FE/pull/45) · Draft
+작업 브랜치: [benhoon/11th-Mobile_FE · week07](https://github.com/benhoon/11th-Mobile_FE/tree/week07)
 
-사용자 포크의 `week07` → 원본 저장소의 `GAMJA`입니다. 선행 6주차 PR #42가 아직 열려 있어 이력에 포함됩니다. [7주차 변경만 비교](https://github.com/benhoon/11th-Mobile_FE/compare/week06...week07)
+포크의 `week07` 브랜치에 푸시했습니다. [7주차 변경만 비교](https://github.com/benhoon/11th-Mobile_FE/compare/week06...week07)
 
 ## 구현 범위
 
