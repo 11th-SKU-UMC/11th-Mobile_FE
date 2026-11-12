@@ -2,6 +2,10 @@
 
 검증일: 2026-11-12 (Asia/Seoul)
 
+PR: [[Week07] 감자/이상훈 미션 제출 #45](https://github.com/11th-SKU-UMC/11th-Mobile_FE/pull/45) · Draft
+
+사용자 포크의 `week07` → 원본 저장소의 `GAMJA`입니다. 선행 6주차 PR #42가 아직 열려 있어 이력에 포함됩니다. [7주차 변경만 비교](https://github.com/benhoon/11th-Mobile_FE/compare/week06...week07)
+
 ## 구현 범위
 
 기존 `week06/movielog`를 기반으로 `week07/movielog`에 구현했습니다. 회원가입·등록은 `SignUpViewModel`·`MovieDetailViewModel`, 조회·수정·삭제는 `MyRatingsViewModel`이 담당합니다.
