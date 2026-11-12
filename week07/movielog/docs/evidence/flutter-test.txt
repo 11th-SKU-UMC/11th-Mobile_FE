@@ -1,0 +1,56 @@
+00:00 +0: loading C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart
+00:00 +0: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: DTO handles missing fields, numeric conversion, and detail genres
+00:00 +1: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Discover omits all-genres condition and joins multiple IDs with OR
+00:00 +2: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Popular keeps fewer than five films and recovers after a failure
+00:00 +3: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Discover collects 30 unique IDs without assuming a page size
+00:00 +4: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Last or empty pages stop loading and fewer than 30 films are valid
+00:00 +5: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Genre selection restarts at page one; clearing omits the filter
+00:00 +6: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Refresh keeps the last successful list and retries the same filter
+00:00 +7: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Busy requests block genre changes and disposal ignores late responses
+00:00 +8: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: No results become Empty and initial failure can be retried
+00:00 +9: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Logs mask authorization while the real request header stays intact
+00:00 +10: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Detail reload uses the URL movie ID
+00:00 +11: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +12: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +13: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +14: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +15: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +16: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +17: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +18: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +19: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +20: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +21: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +22: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +23: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +24: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +25: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +26: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +27: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Home renders fewer than five films and missing posters safely
+00:00 +28: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Dialog requires a star, preserves text through failure, blocks exit, then retries
+00:01 +29: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Real movie ID reaches the detail screen and rating dialog
+00:01 +30: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Edit preloads score/comment, preserves values, and GET-only retry follows successful PATCH
+00:01 +31: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Refresh failure preserves results and the dialog retries successfully
+00:01 +32: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Single delete cancel sends no request; pending delete keeps the dialog; last item becomes Empty
+00:01 +33: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Single delete cancel sends no request; pending delete keeps the dialog; last item becomes Empty
+00:01 +34: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Loading disables chips and multi-select sends OR conditions
+00:01 +35: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Loading disables chips and multi-select sends OR conditions
+00:01 +36: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Signup displays server 400 after local validation succeeds
+00:01 +37: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Signup displays server 400 after local validation succeeds
+00:01 +38: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Signup displays server 400 after local validation succeeds
+00:01 +39: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Signup displays server 400 after local validation succeeds
+00:01 +40: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Signup displays server 400 after local validation succeeds
+00:01 +41: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Signup displays server 400 after local validation succeeds
+00:01 +42: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Signup displays server 400 after local validation succeeds
+00:01 +43: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Signup displays server 400 after local validation succeeds
+00:01 +44: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Signup displays server 400 after local validation succeeds
+00:01 +45: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Signup displays server 400 after local validation succeeds
+00:01 +46: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Signup displays server 400 after local validation succeeds
+00:01 +47: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Signup displays server 400 after local validation succeeds
+00:02 +48: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Signup shows server errors and restores a duplicate without a request
+00:02 +49: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/movie_flow_test.dart: Signup shows server errors and restores a duplicate without a request
+00:02 +50: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Signup submits once, blocks back, stores memberId and routes to movies
+00:02 +51: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Signup submits once, blocks back, stores memberId and routes to movies
+00:02 +52: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: Signup submits once, blocks back, stores memberId and routes to movies
+00:02 +53: C:/Users/benle/workspace/11th-Mobile_FE-week07/week07/movielog/test/week07_mission_test.dart: (tearDownAll)
+00:02 +53: All tests passed!
