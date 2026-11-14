@@ -1,24 +1,14 @@
-import 'package:provider/provider.dart';
-import 'package:movielog/core/network/tmdb_client.dart';
-import 'package:movielog/data/services/tmdb_movie_service.dart';
-
 import 'package:flutter/material.dart';
-import 'package:movielog/ProfileScreens/ProfileBody/profile_screen.dart';
-import 'package:movielog/theme/app_colors.dart';
-
-import 'theme/app_theme.dart';
-
-import 'package:movielog/start_screen.dart';
-
-import 'package:movielog/SignUpScreen/sign_up_screen.dart';
-
-import 'package:movielog/router/app_router.dart';
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
+import 'package:provider/provider.dart';
 import 'package:movielog/core/network/movie_log_client.dart';
-import 'package:movielog/data/services/member_check_service.dart';
+import 'package:movielog/core/network/tmdb_client.dart';
 import 'package:movielog/data/services/rating_api_service.dart';
+import 'package:movielog/data/services/sign_up_service.dart';
+import 'package:movielog/data/services/tmdb_movie_service.dart';
+import 'package:movielog/router/app_router.dart';
+import 'package:movielog/theme/app_theme.dart';
+import 'package:movielog/view_models/learning_member_session.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +16,36 @@ Future<void> main() async {
   runApp(const MovieLogApp());
 }
 
+class MovieLogApp extends StatelessWidget {
+  const MovieLogApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // TMDB Client와 MovieLog Client는 분리합니다.
+    final movieLogClient = createMovieLogClient();
+    return MultiProvider(
+      providers: [
+        // 7주차: 회원가입 결과 memberId를 보관하는 학습용 세션
+        ChangeNotifierProvider<LearningMemberSession>(
+          create: (_) => LearningMemberSession(),
+        ),
+        Provider<TmdbMovieService>(
+          create: (_) => TmdbMovieService(createTmdbClient()),
+        ),
+        Provider<SignUpService>(create: (_) => SignUpService(movieLogClient)),
+        Provider<RatingApiService>(
+          create: (_) => RatingApiService(movieLogClient),
+        ),
+      ],
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light,
+        title: 'MovieLog',
+        routerConfig: AppRouter.router,
+      ),
+    );
+  }
+}
 // void main() => runApp(const MovieLogApp());
 
 /* class MovieLogApp extends StatelessWidget {
@@ -39,7 +59,7 @@ Future<void> main() async {
     // home: const ProfileScreen(),
     // home: const SignUpScreen(),
   );
-} */
+} 
 
 class MovieLogApp extends StatelessWidget {
   const MovieLogApp({super.key});
@@ -70,3 +90,4 @@ class MovieLogApp extends StatelessWidget {
     );
   }
 }
+*/
