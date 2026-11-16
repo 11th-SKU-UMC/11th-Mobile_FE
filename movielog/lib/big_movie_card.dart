@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movielog/movie.dart';
+import 'package:movielog/data/models/tmdb_movie_dto.dart';
+import 'package:movielog/widgets/tmdb_poster_image.dart';
 
 class BigMovieCard extends StatelessWidget {
   const BigMovieCard({super.key, required this.movie});
 
-  final Movie movie;
+  final TmdbMovieDto movie;
 
   @override
   Widget build(BuildContext context) {
+    final releaseDate = movie.releaseDate;
+    final year = (releaseDate != null && releaseDate.length >= 4)
+        ? releaseDate.substring(0, 4)
+        : null;
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: SizedBox(
@@ -18,12 +24,7 @@ class BigMovieCard extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             // 1. 배경 포스터
-            Image.asset(
-              movie.posterAsset,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) =>
-                  Container(color: Colors.black87),
-            ),
+            TmdbPosterImage(posterPath: movie.posterPath),
             // 2. 아래쪽 어둡게
             const DecoratedBox(
               decoration: BoxDecoration(
@@ -63,17 +64,24 @@ class BigMovieCard extends StatelessWidget {
                   const SizedBox(height: 12),
                   Text(
                     movie.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 28,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${movie.genre} · ${movie.year}',
-                    style: const TextStyle(color: Colors.white70, fontSize: 14),
-                  ),
+                  if (year != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      year,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
@@ -81,24 +89,20 @@ class BigMovieCard extends StatelessWidget {
                     child: ElevatedButton(
                       // path parameter를 이용하여 영화 상세 페이지로 이동
                       onPressed: () {
-                        context.push('/movies/${movie.id}');
+                        context.push('/movies/${movie.id}', extra: movie);
                       },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF5B3E9C),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
                       child: const Text(
                         '상세보기',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      /*  icon: const Icon(Icons.info, color: Colors.white),
-                      label: const Text(
-                        '상세보기', */
-
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF5B3E9C),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
                     ),
