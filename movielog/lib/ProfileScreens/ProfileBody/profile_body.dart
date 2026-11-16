@@ -1,6 +1,7 @@
 // 그냥 바디를 따로 만들었어
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/ProfileScreens/ProfileBody/ProfileHeader.dart';
 import 'package:movielog/ProfileScreens/ProfileBody/ProfileStats.dart';
@@ -11,13 +12,40 @@ class ProfileBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16), // ← 좌우 여백
       child: Column(
         children: [
           const ProfileHeader(),
           const EditProfileButton(),
           const ProfileStats(),
+          const SizedBox(height: 24),
+
+          // 6주차: 내가 등록한 평점 진입 행
+          ListTile(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 6,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+              side: const BorderSide(
+                color: AppColors.SecondaryScale300,
+                width: 1.5,
+              ),
+            ),
+            tileColor: AppColors.white,
+            title: const Text(
+              '내가 등록한 평점',
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+            ),
+            trailing: const Icon(
+              Icons.chevron_right,
+              color: AppColors.primary,
+              size: 30,
+            ),
+            onTap: () => context.push('/my/ratings'),
+          ),
           const SizedBox(height: 32),
 
           Align(
@@ -80,6 +108,7 @@ class ProfileBody extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(height: 24),
         ],
       ),
     );

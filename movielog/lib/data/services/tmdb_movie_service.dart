@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:movielog/data/models/tmdb_genre_dto.dart';
 import 'package:movielog/data/models/tmdb_movie_page_dto.dart';
 
+import 'package:movielog/data/models/tmdb_movie_dto.dart';
+
 class TmdbMovieService {
   TmdbMovieService(this._dio);
   final Dio _dio;
@@ -45,5 +47,24 @@ class TmdbMovieService {
     return genres
         .map((item) => TmdbGenreDto.fromJson(item as Map<String, dynamic>))
         .toList();
+  }
+
+  // 영화 상세 (평점 목록의 movieId → 제목·포스터)
+  Future<TmdbMovieDto> fetchMovieDetail(int movieId) async {
+    final response = await _dio.get(
+      '/movie/$movieId',
+      queryParameters: {'language': 'ko-KR'},
+    );
+    return TmdbMovieDto.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  // 404만 null로 바꾸고, 나머지 오류는 그대로 던집니다.
+  Future<TmdbMovieDto?> findMovieById(int movieId) async {
+    try {
+      return await fetchMovieDetail(movieId);
+    } on DioException catch (error) {
+      if (error.response?.statusCode == 404) return null;
+      rethrow;
+    }
   }
 }
