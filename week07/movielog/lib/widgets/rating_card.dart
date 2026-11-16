@@ -7,10 +7,23 @@ import 'tmdb_poster_image.dart';
 
 /// 평점 한 건과 TMDB 영화 정보를 보여주는 카드.
 /// entry.movie가 null이면 제목·포스터 대신 placeholder를 표시하고 평점은 유지합니다.
+/// - onEdit/onDelete가 있으면 카드 오른쪽에 개별 수정·삭제 버튼을 보여줍니다.
+/// - onSelectedChanged가 있으면 다중 선택 모드로, 버튼 대신 체크박스를 보여줍니다.
 class RatingCard extends StatelessWidget {
-  const RatingCard({super.key, required this.entry});
+  const RatingCard({
+    super.key,
+    required this.entry,
+    this.onEdit,
+    this.onDelete,
+    this.isSelected = false,
+    this.onSelectedChanged,
+  });
 
   final RatingWithMovie entry;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
+  final bool isSelected;
+  final ValueChanged<bool>? onSelectedChanged;
 
   static String _formatDate(DateTime dateTime) {
     final local = dateTime.toLocal();
@@ -24,13 +37,19 @@ class RatingCard extends StatelessWidget {
     final rating = entry.rating;
     final movie = entry.movie;
     final comment = rating.comment?.trim(); // null이면 표시하지 않습니다.
+    final selectionMode = onSelectedChanged != null;
 
-    return Container(
+    final card = Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.gray.withValues(alpha: 0.3)),
+        border: Border.all(
+          color: isSelected
+              ? AppColors.violet
+              : AppColors.gray.withValues(alpha: 0.3),
+          width: isSelected ? 2 : 1,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,8 +103,49 @@ class RatingCard extends StatelessWidget {
               ],
             ),
           ),
+          if (selectionMode)
+            Checkbox(
+              value: isSelected,
+              activeColor: AppColors.violet,
+              onChanged: (value) => onSelectedChanged!(value ?? false),
+            )
+          else if (onEdit != null || onDelete != null)
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (onEdit != null)
+                  IconButton(
+                    tooltip: '수정',
+                    visualDensity: VisualDensity.compact,
+                    onPressed: onEdit,
+                    icon: const Icon(
+                      Icons.edit_outlined,
+                      color: AppColors.violet,
+                    ),
+                  ),
+                if (onDelete != null)
+                  IconButton(
+                    tooltip: '삭제',
+                    visualDensity: VisualDensity.compact,
+                    onPressed: onDelete,
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      color: AppColors.gray,
+                    ),
+                  ),
+              ],
+            ),
         ],
       ),
+    );
+
+    if (!selectionMode) return card;
+
+    // 다중 선택 모드에서는 카드 어디를 눌러도 선택이 바뀝니다.
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => onSelectedChanged!(!isSelected),
+      child: card,
     );
   }
 }

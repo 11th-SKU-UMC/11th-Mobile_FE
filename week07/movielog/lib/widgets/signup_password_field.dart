@@ -10,12 +10,16 @@ class SignUpPasswordField extends StatelessWidget {
     required this.focusNode,
     required this.onFieldSubmitted,
     required this.onChanged,
+    this.errorText,
   });
 
   final TextEditingController controller;
   final FocusNode focusNode;
   final VoidCallback onFieldSubmitted;
   final VoidCallback onChanged;
+
+  /// 서버(400)가 거부한 비밀번호 오류 문구. 로컬 validator가 통과해도 계속 표시됩니다.
+  final String? errorText;
 
   static String? validate(String? value) {
     final password = value ?? '';
@@ -46,8 +50,8 @@ class SignUpPasswordField extends StatelessWidget {
           autovalidateMode: AutovalidateMode.onUserInteraction,
           decoration: buildSignUpFieldDecoration(
             hintText: '비밀번호를 입력해주세요',
-            hasError: hasError,
-          ),
+            hasError: hasError || errorText != null,
+          ).copyWith(errorText: errorText),
           textInputAction: TextInputAction.done,
           validator: validate,
           onChanged: (_) => onChanged(),
