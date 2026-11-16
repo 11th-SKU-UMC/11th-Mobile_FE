@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../screens/home_screen.dart';
 import '../screens/main_screen.dart';
@@ -8,6 +9,9 @@ import '../screens/profile_screen.dart';
 import '../screens/rating_screen.dart';
 import '../screens/signup_screen.dart';
 import '../screens/start_screen.dart';
+import '../data/services/tmdb_movie_service.dart';
+import '../view_models/movie_home_view_model.dart';
+import '../view_models/movie_list_view_model.dart';
 
 class AppRouter {
   AppRouter._();
@@ -37,11 +41,23 @@ class AppRouter {
         routes: [
           GoRoute(
             path: '/home',
-            builder: (context, state) => const HomeScreen(),
+            builder: (context, state) =>
+                ChangeNotifierProvider<MovieHomeViewModel>(
+                  create: (context) =>
+                      MovieHomeViewModel(context.read<TmdbMovieService>())
+                        ..loadPopular(),
+                  child: const HomeScreen(), // 기존 홈 화면 위젯 이름 그대로
+                ),
           ),
           GoRoute(
             path: '/movies',
-            builder: (context, state) => const MovieListScreen(),
+            builder: (context, state) =>
+                ChangeNotifierProvider<MovieListViewModel>(
+                  create: (context) =>
+                      MovieListViewModel(context.read<TmdbMovieService>())
+                        ..loadInitial(),
+                  child: const MovieListScreen(),
+                ),
           ),
           GoRoute(
             path: '/my',

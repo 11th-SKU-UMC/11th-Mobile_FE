@@ -1,20 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../models/movie.dart';
+import '../data/models/tmdb_movie_dto.dart';
 import '../theme/app_colors.dart';
+import 'tmdb_poster_image.dart';
 
 class MovieCard extends StatelessWidget {
-  const MovieCard({super.key, required this.movie});
+  const MovieCard({super.key, required this.movie, this.genreLabel});
 
-  final Movie movie;
+  final TmdbMovieDto movie;
+
+  /// Genre API로 찾은 장르 이름 (없으면 표시하지 않는다)
+  final String? genreLabel;
+
+  // release_date가 null이거나 짧으면 연도를 표시하지 않는다.
+  String? get _year {
+    final date = movie.releaseDate;
+    if (date == null || date.length < 4) return null;
+    return date.substring(0, 4);
+  }
+
+  String get _subtitle {
+    final parts = <String>[
+      ?_year,
+      ?genreLabel,
+    ];
+    return parts.join(' · ');
+  }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final subtitle = _subtitle;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
+      // TMDB id를 그대로 전달한다. (index 아님)
       onTap: () => context.push('/movies/${movie.id}'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -26,22 +47,16 @@ class MovieCard extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    movie.posterAsset,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: AppColors.gray.withAlpha(51),
-                      child: const Icon(
-                        Icons.broken_image,
-                        color: AppColors.gray,
-                      ),
-                    ),
+                  child: TmdbPosterImage(
+                    posterPath: movie.posterPath,
+                    width: double.infinity,
+                    height: double.infinity,
                   ),
                 ),
                 Positioned(
                   top: 8,
                   right: 8,
-                  child: _RatingBadge(rating: movie.rating),
+                  child: _RatingBadge(rating: movie.voteAverage),
                 ),
               ],
             ),
@@ -53,11 +68,15 @@ class MovieCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: textTheme.titleSmall,
           ),
-          const SizedBox(height: 2),
-          Text(
-            '${movie.year} · ${movie.genre}',
-            style: textTheme.bodySmall?.copyWith(color: AppColors.gray),
-          ),
+          if (subtitle.isNotEmpty) ...[
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: textTheme.bodySmall?.copyWith(color: AppColors.gray),
+            ),
+          ],
         ],
       ),
     );

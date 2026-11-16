@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/models/tmdb_genre_dto.dart';
 import '../theme/app_colors.dart';
 
 class GenreFilterSheet extends StatefulWidget {
@@ -9,15 +10,18 @@ class GenreFilterSheet extends StatefulWidget {
     required this.initialSelected,
   });
 
-  final List<String> genres;
-  final Set<String> initialSelected;
+  /// Genre API로 받은 장르 (id/name)
+  final List<TmdbGenreDto> genres;
+
+  /// 처음 체크되어 있을 장르 ID
+  final Set<int> initialSelected;
 
   @override
   State<GenreFilterSheet> createState() => _GenreFilterSheetState();
 }
 
 class _GenreFilterSheetState extends State<GenreFilterSheet> {
-  late final Set<String> _selected = {...widget.initialSelected};
+  late final Set<int> _selected = {...widget.initialSelected};
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +64,7 @@ class _GenreFilterSheetState extends State<GenreFilterSheet> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '여러 장르를 선택할 수 있어요',
+                      '여러 장르를 선택할 수 있어요. 아무것도 선택하지 않으면 전체 영화를 보여줘요.',
                       style: textTheme.bodyMedium?.copyWith(
                         color: AppColors.gray,
                       ),
@@ -71,14 +75,14 @@ class _GenreFilterSheetState extends State<GenreFilterSheet> {
                         contentPadding: EdgeInsets.zero,
                         controlAffinity: ListTileControlAffinity.leading,
                         activeColor: AppColors.violet,
-                        title: Text(genre),
-                        value: _selected.contains(genre),
+                        title: Text(genre.name),
+                        value: _selected.contains(genre.id),
                         onChanged: (checked) {
                           setState(() {
                             if (checked == true) {
-                              _selected.add(genre);
+                              _selected.add(genre.id);
                             } else {
-                              _selected.remove(genre);
+                              _selected.remove(genre.id);
                             }
                           });
                         },
@@ -101,7 +105,7 @@ class _GenreFilterSheetState extends State<GenreFilterSheet> {
                       height: 52,
                       child: ElevatedButton(
                         onPressed: () =>
-                            Navigator.pop(context, Set<String>.of(_selected)),
+                            Navigator.pop(context, Set<int>.of(_selected)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.violet,
                           foregroundColor: AppColors.white,

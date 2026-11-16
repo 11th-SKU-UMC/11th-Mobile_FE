@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../models/movie.dart';
+import '../data/models/tmdb_movie_dto.dart';
 import '../theme/app_colors.dart';
+import 'tmdb_poster_image.dart';
 
 class PopularMovieCard extends StatelessWidget {
   const PopularMovieCard({super.key, required this.movie, required this.rank});
 
-  final Movie movie;
+  final TmdbMovieDto movie;
   final int rank;
 
   static const _starColor = Color(0xFFC9A646);
@@ -18,6 +19,7 @@ class PopularMovieCard extends StatelessWidget {
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
+      // TMDB id를 그대로 전달한다. (index 아님)
       onTap: () => context.push('/movies/${movie.id}'),
       child: SizedBox(
         width: 140,
@@ -31,16 +33,10 @@ class PopularMovieCard extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: Image.asset(
-                      movie.posterAsset,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: AppColors.gray.withAlpha(51),
-                        child: const Icon(
-                          Icons.broken_image,
-                          color: AppColors.gray,
-                        ),
-                      ),
+                    child: TmdbPosterImage(
+                      posterPath: movie.posterPath,
+                      width: double.infinity,
+                      height: double.infinity,
                     ),
                   ),
                   Positioned(
@@ -66,7 +62,7 @@ class PopularMovieCard extends StatelessWidget {
                 const Icon(Icons.star, size: 16, color: _starColor),
                 const SizedBox(width: 4),
                 Text(
-                  movie.rating.toStringAsFixed(1),
+                  movie.voteAverage.toStringAsFixed(1),
                   style: textTheme.bodyMedium?.copyWith(
                     color: AppColors.gray,
                   ),
