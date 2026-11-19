@@ -1,11 +1,23 @@
 // 머리쪽
+// 8주차: 하드코딩 닉네임 대신 GET me로 받은 닉네임·가입일·이메일을 표시합니다.
 
 import 'package:flutter/material.dart';
+import 'package:movielog/data/models/member_info.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
 
+// Challenge: createdAt → "2026.10.10 가입"
+String formatJoinedDate(DateTime createdAt) {
+  final local = createdAt.toLocal();
+  final month = local.month.toString().padLeft(2, '0');
+  final day = local.day.toString().padLeft(2, '0');
+  return '${local.year}.$month.$day 가입';
+}
+
 class ProfileHeader extends StatelessWidget {
-  const ProfileHeader({super.key});
+  const ProfileHeader({super.key, required this.member});
+
+  final MemberInfo member;
 
   @override
   Widget build(BuildContext context) {
@@ -28,26 +40,23 @@ class ProfileHeader extends StatelessWidget {
             'assets/images/profile/profile_movielog.jpg',
           ),
         ),
-        SizedBox(height: 11),
+        const SizedBox(height: 11),
         Text(
-          '무비러버',
+          member.nickname,
           style: AppTextStyles.titleLarge.copyWith(
             color: AppColors.black,
             fontWeight: FontWeight.w500,
           ),
         ),
-        SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Text(
-            textAlign: TextAlign.center,
-            '매주 주말엔 영화관으로 출근하는 프로 관람객. 좋은 영화를 보고 기록하는 것을 좋아합니다.',
-            style: AppTextStyles.bodyMedium.copyWith(
-              fontSize: 16.3,
-              color: AppColors.primary80,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+        const SizedBox(height: 6),
+        Text(
+          formatJoinedDate(member.createdAt),
+          style: AppTextStyles.bodySmall.copyWith(color: AppColors.primary80),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          member.email,
+          style: AppTextStyles.bodySmall.copyWith(color: AppColors.primary80),
         ),
       ],
     );
