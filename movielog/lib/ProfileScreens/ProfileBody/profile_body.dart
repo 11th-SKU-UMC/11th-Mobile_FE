@@ -6,9 +6,12 @@ import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/ProfileScreens/ProfileBody/ProfileHeader.dart';
 import 'package:movielog/ProfileScreens/ProfileBody/ProfileStats.dart';
 import 'package:movielog/ProfileScreens/ProfileBody/EditProfileButton.dart';
+import 'package:movielog/data/models/member_info.dart';
 
 class ProfileBody extends StatelessWidget {
-  const ProfileBody({super.key});
+  const ProfileBody({super.key, required this.member});
+
+  final MemberInfo member; // 8주차: GET /v7/members/me 결과
 
   @override
   Widget build(BuildContext context) {
@@ -16,12 +19,12 @@ class ProfileBody extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16), // ← 좌우 여백
       child: Column(
         children: [
-          const ProfileHeader(),
+          ProfileHeader(member: member),
           const EditProfileButton(),
           const ProfileStats(),
           const SizedBox(height: 24),
 
-          // 6주차: 내가 등록한 평점 진입 행
+          // 8주차: 현재 로그인 세션에서 등록한 평점 (토큰 기반 수정·삭제)
           ListTile(
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 20,

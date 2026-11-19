@@ -41,11 +41,17 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
     if (!mounted) return; // await 뒤에는 mounted 재확인
     if (saved == true) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('평점을 등록했습니다. 마이페이지의 "내가 등록한 평점"에서 확인할 수 있습니다.'),
+      final snackBar = ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('평점을 등록했습니다.'),
+          action: SnackBarAction(
+            label: '내 평점 보기',
+            onPressed: () => context.push('/my/ratings'),
+          ),
         ),
       );
+      // 버튼(action)이 있는 SnackBar는 최신 Flutter에서 자동으로 닫히지 않아서 4초 뒤 직접 닫습니다.
+      Future.delayed(const Duration(seconds: 4), snackBar.close);
     } else if (lastError != null) {
       // 실패 후 취소한 경우
       ScaffoldMessenger.of(context)
@@ -62,9 +68,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         body: const Center(child: Text('영화 정보를 불러올 수 없어요.')),
       );
     }
-    final hasMember = context.select<MovieDetailViewModel, bool>(
-      (vm) => vm.memberId != null,
-    );
 
     return Scaffold(
       appBar: AppBar(
@@ -98,16 +101,11 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 textAlign: TextAlign.center,
               ),
             ),
+            // 8주차: 보호 화면은 Router가 signedIn일 때만 보여주므로 memberId 확인이 필요 없습니다.
             ElevatedButton(
-              onPressed: hasMember ? _openRatingDialog : null,
+              onPressed: _openRatingDialog,
               child: const Text('평점 남기기'),
             ),
-            // 학습용 회원이 없으면 등록 버튼 비활성화 + 가입 안내
-            if (!hasMember)
-              TextButton(
-                onPressed: () => context.push('/register'),
-                child: const Text('학습용 회원가입 후 평점을 남길 수 있어요 →'),
-              ),
             const SizedBox(height: 24),
           ],
         ),

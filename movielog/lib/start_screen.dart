@@ -1,60 +1,19 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:movielog/SignUpScreen/sign_up_screen.dart';
+import 'package:movielog/widgets/movielog_button.dart';
 
-import 'package:go_router/go_router.dart';
+// 8주차: 1주차 StartScreen 레이아웃을 재사용한 스플래시 화면입니다.
+// onRetry == null → 세션 확인 중(initializing), onRetry != null → 확인 실패(retryRequired)
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({super.key, this.message, this.onRetry});
 
-// import 'package:movielog/router/app_router.dart';
-
-/* class StartScreen extends StatelessWidget {
-  const StartScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.warmWhite,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          '내 프로필',
-          style: AppTextStyles.titleLarge.copyWith(color: AppColors.primary),
-        ),
-        scrolledUnderElevation: 0,
-        shadowColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-      ),
-      body: SafeArea(
-        minimum: EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          children: [
-            Icon(Icons.movie_outlined),
-            Text('무비러버', style: AppTextStyles.titleLarge),
-            Text(
-              '평점 4.5',
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
- */
-
-class StartScreen extends StatelessWidget {
-  const StartScreen({super.key});
+  final String? message;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: SafeArea(
@@ -66,7 +25,7 @@ class StartScreen extends StatelessWidget {
               Column(
                 children: [
                   const SizedBox(height: 32),
-                  const Text('FLUTTER 1주차'),
+                  const Text('FLUTTER 8주차'),
                   const SizedBox(height: 64),
                   SvgPicture.asset(
                     'assets/logos/movielog_logo.svg',
@@ -91,26 +50,30 @@ class StartScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    context.go('/register');
-                  }, // 1주차에는 화면 이동을 연결하지 않습니다.
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(0, 48),
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: colors.onPrimary,
-                    shape: RoundedRectangleBorder(
-                      // ← 이거 추가
-                      borderRadius: BorderRadius.circular(
-                        12,
-                      ), // 숫자 작을수록 각짐, 0이면 완전 직각
+              // 1주차 '시작하기' 버튼 자리를 로딩/재시도 상태로 대체합니다.
+              if (onRetry == null)
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 16),
+                  child: CircularProgressIndicator(color: AppColors.primary),
+                )
+              else
+                Column(
+                  children: [
+                    Text(
+                      message ?? '로그인 상태를 확인하지 못했어요.',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.primary80,
+                      ),
                     ),
-                  ),
-                  child: const Text('시작하기'),
+                    const SizedBox(height: 12),
+                    MovieLogButton(
+                      label: '다시 시도',
+                      width: double.infinity,
+                      onPressed: onRetry,
+                    ),
+                  ],
                 ),
-              ),
             ],
           ),
         ),
