@@ -138,6 +138,13 @@ class ProfileScreen extends StatelessWidget {
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => context.push('/my/ratings'),
               ),
+              // 9주차: 내가 등록한 평점 행 아래에 내 즐겨찾기 행 (member가 준비된 뒤에만 보임)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('내 즐겨찾기'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/my/favorites'),
+              ),
             ],
           ),
         ),

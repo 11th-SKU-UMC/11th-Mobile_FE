@@ -5,8 +5,11 @@ import 'package:provider/provider.dart';
 
 import 'core/network/movie_log_client.dart';
 import 'core/network/tmdb_client.dart';
+import 'core/session/auth_session_bridge.dart';
+import 'core/session/session_guard.dart';
 import 'core/storage/token_storage.dart';
 import 'data/services/auth_api_service.dart';
+import 'data/services/favorite_api_service.dart';
 import 'data/services/member_api_service.dart';
 import 'data/services/rating_api_service.dart';
 import 'data/services/sign_up_service.dart';
@@ -43,6 +46,10 @@ class MovieLogApp extends StatelessWidget {
         Provider<RatingApiService>(
           create: (_) => RatingApiService(publicClient, authClient),
         ),
+        // 9주차: 즐겨찾기 API는 보호용 authClient(JWT)를 사용합니다.
+        Provider<FavoriteApiService>(
+          create: (_) => FavoriteApiService(authClient),
+        ),
         // Service를 주입받는 ViewModel
         ChangeNotifierProvider<AuthViewModel>(
           create: (context) => AuthViewModel(
@@ -53,6 +60,25 @@ class MovieLogApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<SessionRatingsStore>(
           create: (context) => SessionRatingsStore(context.read<AuthViewModel>()),
+        ),
+        // 9주차: 인증 상태(AuthViewModel)를 SessionGuard에 전달합니다.
+        // 앱 시작부터 로그인 상태 변화를 따라가도록 lazy: false로 바로 만듭니다.
+        Provider<AuthSessionBridge>(
+          lazy: false,
+          create: (context) {
+            final auth = context.read<AuthViewModel>();
+            return AuthSessionBridge(
+              authSignals: auth,
+              sessionVersion: () => auth.sessionVersion,
+              verifiedEmail: () => auth.status == AuthStatus.signedIn
+                  ? auth.member?.email
+                  : null,
+            );
+          },
+          dispose: (_, bridge) => bridge.dispose(),
+        ),
+        Provider<SessionGuard>(
+          create: (context) => context.read<AuthSessionBridge>().guard,
         ),
       ],
       child: const _MovieLogRouterApp(),

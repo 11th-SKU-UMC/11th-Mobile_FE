@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../theme/app_colors.dart';
+import '../view_models/favorite_detail_view_model.dart';
 import '../view_models/movie_detail_view_model.dart';
 import '../view_models/submit_status.dart';
+import '../widgets/favorite_button.dart';
 import '../widgets/rating_dialog.dart';
 import '../widgets/tmdb_poster_image.dart';
 
@@ -18,7 +20,14 @@ class MovieDetailScreen extends StatefulWidget {
 }
 
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
-  bool _isFavorite = false;
+  @override
+  void initState() {
+    super.initState();
+    // build()에서는 조회하지 않고, 화면이 처음 만들어질 때 서버의 즐겨찾기 여부를 한 번만 조회합니다.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.read<FavoriteDetailViewModel>().load();
+    });
+  }
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context)
@@ -29,13 +38,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           behavior: SnackBarBehavior.floating,
         ),
       );
-  }
-
-  void _toggleFavorite() {
-    setState(() {
-      _isFavorite = !_isFavorite;
-    });
-    _showSnackBar(_isFavorite ? '즐겨찾기에 추가했어요.' : '즐겨찾기에서 삭제했어요.');
   }
 
   Future<void> _showRatingDialog() async {
@@ -113,16 +115,30 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(movie.title, style: textTheme.headlineSmall),
-                  if (year != null) ...[
-                    const SizedBox(height: 6),
-                    Text(
-                      year,
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: AppColors.gray,
+                  // 제목·정보 텍스트 오른쪽에 북마크(즐겨찾기) 버튼을 둡니다.
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(movie.title, style: textTheme.headlineSmall),
+                            if (year != null) ...[
+                              const SizedBox(height: 6),
+                              Text(
+                                year,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: AppColors.gray,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                      const FavoriteButton(),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
@@ -209,25 +225,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   ),
                 Row(
                   children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: _toggleFavorite,
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size(0, 52),
-                          foregroundColor: AppColors.violet,
-                          backgroundColor: _isFavorite
-                              ? AppColors.violet.withAlpha(30)
-                              : Colors.transparent,
-                          side: const BorderSide(color: AppColors.violet),
-                          shape: const StadiumBorder(),
-                        ),
-                        icon: Icon(
-                          _isFavorite ? Icons.bookmark : Icons.bookmark_border,
-                        ),
-                        label: const Text('즐겨찾기'),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
+                    // 3주차의 mock 즐겨찾기 버튼을 제거했으므로 평점 버튼이 전체 너비를 씁니다.
                     Expanded(
                       child: FilledButton.icon(
                         onPressed: canRate ? _showRatingDialog : null,
