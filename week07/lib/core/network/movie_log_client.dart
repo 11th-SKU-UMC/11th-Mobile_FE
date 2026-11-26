@@ -16,7 +16,7 @@ Dio createMovieLogClient() {
   if (kDebugMode) {
     dio.interceptors.add(
       LogInterceptor(
-        requestBody: true,
+        requestBody: false,
         responseBody: true,
       ),
     );
