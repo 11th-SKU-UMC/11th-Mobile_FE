@@ -4,8 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:movielog/data/models/tmdb_movie_dto.dart';
 import 'package:movielog/rating_dialog.dart';
+import 'package:movielog/view_models/favorite_detail_view_model.dart';
 import 'package:movielog/view_models/movie_detail_view_model.dart';
 import 'package:movielog/view_models/submit_status.dart';
+import 'package:movielog/theme/app_text_styles.dart';
+import 'package:movielog/widgets/favorite_button.dart';
 import 'package:movielog/widgets/tmdb_poster_image.dart';
 
 class MovieDetailScreen extends StatefulWidget {
@@ -19,7 +22,15 @@ class MovieDetailScreen extends StatefulWidget {
 }
 
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
-  bool isFavorite = false;
+  // 9주차: 3주차 mock 즐겨찾기 상태(isFavorite)는 제거하고 서버 값을 씁니다.
+  @override
+  void initState() {
+    super.initState();
+    // 화면이 처음 만들어질 때 서버의 즐겨찾기 여부를 한 번 조회합니다. (build에서 조회하지 않음)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.read<FavoriteDetailViewModel>().load();
+    });
+  }
 
   Future<void> _openRatingDialog() async {
     final viewModel = context.read<MovieDetailViewModel>();
@@ -71,23 +82,47 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
-            onPressed: () {
-              setState(() => isFavorite = !isFavorite);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(isFavorite ? '즐겨찾기 추가' : '즐겨찾기 삭제')),
-              );
-            },
-          ),
-        ],
+        title: const Text('영화 상세', style: AppTextStyles.titleAppBar),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             TmdbPosterImage(posterPath: movie.posterPath, height: 300),
-            Text(movie.title, style: const TextStyle(fontSize: 24)),
+            const SizedBox(height: 16),
+            // 9주차: 제목·정보 텍스트 오른쪽에 즐겨찾기(북마크) 버튼
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          movie.title,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        if ((movie.releaseDate ?? '').length >= 4)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Text(
+                              movie.releaseDate!.substring(0, 4),
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const FavoriteButton(),
+                ],
+              ),
+            ),
             RatingBarIndicator(
               rating: movie.voteAverage / 2,
               itemSize: 24,

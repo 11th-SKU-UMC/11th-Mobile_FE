@@ -11,7 +11,7 @@ import 'package:movielog/data/models/member_info.dart';
 class ProfileBody extends StatelessWidget {
   const ProfileBody({super.key, required this.member});
 
-  final MemberInfo member; // 8주차: GET /v7/members/me 결과
+  final MemberInfo member; // 8주차: GET /v8/members/me 결과
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +48,33 @@ class ProfileBody extends StatelessWidget {
               size: 30,
             ),
             onTap: () => context.push('/my/ratings'),
+          ),
+          const SizedBox(height: 12),
+
+          // 9주차: 내가 등록한 평점 아래에 내 즐겨찾기 행
+          ListTile(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 6,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+              side: const BorderSide(
+                color: AppColors.SecondaryScale300,
+                width: 1.5,
+              ),
+            ),
+            tileColor: AppColors.white,
+            title: const Text(
+              '내 즐겨찾기',
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+            ),
+            trailing: const Icon(
+              Icons.chevron_right,
+              color: AppColors.primary,
+              size: 30,
+            ),
+            onTap: () => context.push('/my/favorites'),
           ),
           const SizedBox(height: 32),
 

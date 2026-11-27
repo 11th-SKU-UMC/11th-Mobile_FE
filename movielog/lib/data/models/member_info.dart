@@ -1,6 +1,6 @@
 import 'package:movielog/data/models/common_response.dart';
 
-// GET/PATCH /v7/members/me result: 이메일·닉네임·가입일 (memberId 없음)
+// GET/PATCH /v8/members/me result: 이메일·닉네임·가입일 (memberId 없음)
 class MemberInfo {
   const MemberInfo({
     required this.email,

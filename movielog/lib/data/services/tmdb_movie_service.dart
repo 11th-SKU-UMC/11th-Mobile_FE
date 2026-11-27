@@ -36,6 +36,23 @@ class TmdbMovieService {
     return TmdbMoviePageDto.fromJson(response.data as Map<String, dynamic>);
   }
 
+  // 영화 검색 (검색 화면용). 빈 검색어는 ViewModel에서 먼저 막습니다.
+  Future<TmdbMoviePageDto> searchMovies({
+    required int page,
+    required String query,
+  }) async {
+    final response = await _dio.get(
+      '/search/movie',
+      queryParameters: {
+        'query': query,
+        'page': page,
+        'language': 'ko-KR',
+        'include_adult': false,
+      },
+    );
+    return TmdbMoviePageDto.fromJson(response.data as Map<String, dynamic>);
+  }
+
   // 장르 목록 (장르 Chip용)
   Future<List<TmdbGenreDto>> fetchGenres() async {
     final response = await _dio.get(
@@ -49,7 +66,7 @@ class TmdbMovieService {
         .toList();
   }
 
-  // 영화 상세 (평점 목록의 movieId → 제목·포스터)
+  // 영화 상세 (평점·즐겨찾기 목록의 movieId → 제목·포스터)
   Future<TmdbMovieDto> fetchMovieDetail(int movieId) async {
     final response = await _dio.get(
       '/movie/$movieId',

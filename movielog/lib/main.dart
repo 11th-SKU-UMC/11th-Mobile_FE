@@ -5,6 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:movielog/core/network/movie_log_client.dart';
 import 'package:movielog/core/network/tmdb_client.dart';
+import 'package:movielog/core/session/auth_session_bridge.dart';
+import 'package:movielog/core/session/session_guard.dart';
+import 'package:movielog/data/services/favorite_api_service.dart';
 import 'package:movielog/core/storage/token_storage.dart';
 import 'package:movielog/data/services/auth_api_service.dart';
 import 'package:movielog/data/services/member_api_service.dart';
@@ -56,6 +59,10 @@ class _MovieLogAppState extends State<MovieLogApp> {
         Provider<RatingApiService>(
           create: (_) => RatingApiService(_publicClient, _authClient),
         ),
+        // 9주차: 즐겨찾기는 보호 Client(JWT)를 사용합니다. 새 Dio를 만들지 않습니다.
+        Provider<FavoriteApiService>(
+          create: (_) => FavoriteApiService(_authClient),
+        ),
         // Service를 주입받는 ViewModel
         ChangeNotifierProvider<AuthViewModel>(
           create: (context) => AuthViewModel(
@@ -69,6 +76,24 @@ class _MovieLogAppState extends State<MovieLogApp> {
           create: (_) => SessionRatingsStore(),
           update: (_, auth, store) =>
               store!..syncSession(auth.sessionVersion),
+        ),
+        // 9주차: AuthViewModel의 세션 변화를 SessionGuard에 전달합니다.
+        Provider<AuthSessionBridge>(
+          lazy: false, // 앱 시작부터 세션 변화를 따라가도록 바로 만듭니다.
+          create: (context) {
+            final auth = context.read<AuthViewModel>();
+            return AuthSessionBridge(
+              authSignals: auth,
+              sessionVersion: () => auth.sessionVersion,
+              verifiedEmail: () => auth.status == AuthStatus.signedIn
+                  ? auth.member?.email
+                  : null,
+            );
+          },
+          dispose: (_, bridge) => bridge.dispose(),
+        ),
+        Provider<SessionGuard>(
+          create: (context) => context.read<AuthSessionBridge>().guard,
         ),
       ],
       child: const _MovieLogRouterApp(),
