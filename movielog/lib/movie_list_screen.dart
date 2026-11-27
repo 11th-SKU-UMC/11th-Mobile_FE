@@ -1,23 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
 import 'package:movielog/ProfileScreens/AppBar/common_app_bar.dart';
 import 'package:movielog/movie_grid_card.dart';
+import 'package:movielog/view_models/load_phase.dart';
 import 'package:movielog/view_models/movie_list_view_model.dart';
+import 'package:movielog/view_models/paged_movies_view_model.dart';
 import 'package:movielog/widgets/movie_list_empty.dart';
 import 'package:movielog/widgets/movie_list_error.dart';
 import 'package:movielog/widgets/movie_list_loading.dart';
+import 'package:movielog/widgets/movie_page_footer.dart';
 
+// 9주차: 5주차의 최대 30개 수집 대신 첫 page만 보여주고 "더 보기"로 한 page씩 추가합니다.
 class MovieListScreen extends StatelessWidget {
   const MovieListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final genres = context.watch<MovieListViewModel>().genres;
     return Scaffold(
-      appBar: CommonAppBar(title: '영화', titleStyle: AppTextStyles.titleAppBar),
-      body: Consumer<MovieListViewModel>(
-        builder: (context, viewModel, child) {
+      appBar: CommonAppBar(
+        title: '영화',
+        titleStyle: AppTextStyles.titleAppBar,
+        actions: [
+          // 검색 화면으로 이동 (하단 NavigationBar 없는 화면)
+          IconButton(
+            tooltip: '영화 검색',
+            icon: const Icon(Icons.search, color: AppColors.primary),
+            onPressed: () => context.push('/movies/search'),
+          ),
+        ],
+      ),
+      body: Consumer<PagedMoviesViewModel>(
+        builder: (context, vm, child) {
+          final firstLoading = vm.phase == LoadPhase.loading;
           return Column(
             children: [
               // 장르 칩 (TMDB Genre API 결과로 구성)
@@ -31,41 +49,48 @@ class MovieListScreen extends StatelessWidget {
                   children: [
                     _GenreChip(
                       label: '전체',
-                      selected: viewModel.selectedGenreId == null,
-                      enabled: !viewModel.isLoading,
-                      onSelected: () => viewModel.selectGenre(null),
+                      selected: vm.genreId == null,
+                      enabled: !firstLoading,
+                      onSelected: () => _selectGenre(vm, null),
                     ),
-                    for (final genre in viewModel.genres)
+                    for (final genre in genres)
                       _GenreChip(
                         label: genre.name,
-                        selected: viewModel.selectedGenreId == genre.id,
-                        enabled: !viewModel.isLoading,
-                        onSelected: () => viewModel.selectGenre(genre.id),
+                        selected: vm.genreId == genre.id,
+                        enabled: !firstLoading,
+                        onSelected: () => _selectGenre(vm, genre.id),
                       ),
                   ],
                 ),
               ),
               // 영화 그리드 (상태별 화면)
               Expanded(
-                child: switch (viewModel.status) {
-                  MovieListLoadStatus.idle ||
-                  MovieListLoadStatus.loading => const MovieListLoading(),
-                  MovieListLoadStatus.error => MovieListError(
-                    onRetry: viewModel.loadInitial,
+                child: switch (vm.phase) {
+                  LoadPhase.idle || LoadPhase.loading => const MovieListLoading(),
+                  LoadPhase.error => MovieListError(
+                    onRetry: () => vm.loadInitial(genreId: vm.genreId),
                   ),
-                  MovieListLoadStatus.empty => const MovieListEmpty(),
-                  MovieListLoadStatus.success => GridView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: viewModel.movies.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 20,
-                          childAspectRatio: 0.55,
+                  LoadPhase.empty => const MovieListEmpty(),
+                  LoadPhase.ready => CustomScrollView(
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        sliver: SliverGrid.builder(
+                          itemCount: vm.movies.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 20,
+                                childAspectRatio: 0.55,
+                              ),
+                          itemBuilder: (context, index) =>
+                              MovieGridCard(movie: vm.movies[index]),
                         ),
-                    itemBuilder: (context, index) =>
-                        MovieGridCard(movie: viewModel.movies[index]),
+                      ),
+                      // 카드 목록 아래: 더 보기 / 추가 로딩 / 재시도 / 끝
+                      SliverToBoxAdapter(child: MoviePageFooter(vm: vm)),
+                    ],
                   ),
                 },
               ),
@@ -74,6 +99,12 @@ class MovieListScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  // 장르를 바꾸면 목록·page를 비우고 첫 page부터 다시 불러옵니다.
+  void _selectGenre(PagedMoviesViewModel vm, int? genreId) {
+    if (vm.genreId == genreId) return; // 같은 장르 다시 누르면 무시
+    vm.loadInitial(genreId: genreId);
   }
 }
 

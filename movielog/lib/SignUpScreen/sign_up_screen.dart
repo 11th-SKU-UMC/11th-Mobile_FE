@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:movielog/data/models/create_member_request.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
-import 'package:movielog/view_models/learning_member_session.dart';
 import 'package:movielog/view_models/sign_up_view_model.dart';
 import 'package:movielog/view_models/submit_status.dart';
 import 'package:movielog/widgets/movielog_button.dart';
@@ -68,14 +67,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
     if (!mounted) return;
 
-    final memberId = viewModel.createdMemberId;
-    if (viewModel.submitStatus == SubmitStatus.success && memberId != null) {
-      context.read<LearningMemberSession>().setMemberId(memberId);
-      debugPrint('[회원가입] 성공 memberId=$memberId'); // 비밀번호는 기록하지 않음
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('회원가입 완료! memberId: $memberId')));
-      context.go('/movies');
+    if (viewModel.submitStatus == SubmitStatus.success) {
+      // 8주차: 가입 후에는 로그인으로 토큰을 받아야 보호 화면에 들어갈 수 있습니다.
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('회원가입 완료! 로그인해 주세요.')),
+      );
+      context.go('/login');
       return;
     }
     final message = viewModel.snackbarMessage;
@@ -369,9 +366,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       TextButton(
-                        onPressed: () {
-                          // 나중에 로그인 화면으로 이동
-                        },
+                        onPressed: viewModel.isSubmitting
+                            ? null
+                            : () => context.go('/login'),
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.only(left: 4),
                           minimumSize: Size.zero,

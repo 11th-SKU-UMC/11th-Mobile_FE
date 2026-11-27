@@ -271,7 +271,12 @@ class _RatingsEmpty extends StatelessWidget {
         children: [
           Icon(Icons.rate_review_outlined, size: 48, color: AppColors.gray),
           SizedBox(height: 12),
-          Text('등록된 평점이 없습니다', style: AppTextStyles.bodyMedium),
+          Text('이번 로그인에서 등록한 평점이 없습니다', style: AppTextStyles.bodyMedium),
+          SizedBox(height: 4),
+          Text(
+            '영화 상세에서 평점을 남기면 여기서 수정·삭제할 수 있어요.',
+            style: AppTextStyles.bodySmall,
+          ),
         ],
       ),
     );
@@ -350,6 +355,14 @@ class _RatingsList extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ),
+        // 8주차 API 한계: 토큰 기반 '내 평점 전체 GET'이 없어 재시작 뒤에는 복원되지 않습니다.
+        const Padding(
+          padding: EdgeInsets.only(bottom: 12),
+          child: Text(
+            '현재 로그인 세션에서 등록한 평점만 표시돼요.',
+            style: AppTextStyles.bodySmall,
           ),
         ),
         if (viewModel.message != null)
